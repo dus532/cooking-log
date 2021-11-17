@@ -1,21 +1,43 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import * as Atoms from '@/components/Atoms';
+import React, { useEffect, useState } from 'react';
+import { loadAsync } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+
+import * as Pretendard from '@/assets/fonts';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+import Router from './Router';
 
 export default function App() {
+  const [appIsReady, setAppIsReady] = useState(false);
+
+  useEffect(() => {
+    async function prepare() {
+      try {
+        await SplashScreen.preventAutoHideAsync();
+        await loadAsync({
+          PreMedium: Pretendard.Medium,
+          PreLight: Pretendard.Light,
+          PreBold: Pretendard.Bold,
+          PreRegular: Pretendard.Regular,
+        });
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setTimeout(() => {
+          void SplashScreen.hideAsync();
+        }, 2000);
+        setAppIsReady(true);
+      }
+    }
+
+    prepare();
+  }, []);
+
+  if (!appIsReady) return null;
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider>
+      <Router />
+    </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
