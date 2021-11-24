@@ -1,15 +1,15 @@
 import * as Atoms from '@/components/Atoms';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { FlatList, Image, Platform } from 'react-native';
+import { FlatList, Image, Platform, Pressable } from 'react-native';
 
 import IMG_BOOKMARK from '@/assets/bookmark.png';
 import IMG_LOGO from '@/assets/logo.png';
 import IMG_STAR from '@/assets/star.png';
 
-import EX_PHOTO1 from '@/assets/example/photo1.jpeg';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useMenusQuery } from '@/hooks/api/menus';
+import { format } from 'date-fns';
 
 function Header() {
   return (
@@ -25,40 +25,17 @@ function Header() {
 
 export default function Home() {
   const navigation = useNavigation<any>();
-
-  const DATA = [
-    {
-      date: '2021-08-15',
-      title: '에그 토스트',
-      rate: 3,
-    },
-    {
-      date: '2021-08-15',
-      title: '에그 토스트',
-      rate: 3,
-    },
-    {
-      date: '2021-08-15',
-      title: '에그 토스트',
-      rate: 3,
-    },
-    {
-      date: '2021-08-15',
-      title: '에그 토스트',
-      rate: 3,
-    },
-  ];
+  const { data } = useMenusQuery();
 
   function Item({ item }: any) {
     return (
-      <TouchableOpacity
-        activeOpacity={0.8}
+      <Pressable
+        android_ripple={{ color: '#0001', borderless: true }}
         onPress={() => {
-          navigation.navigate('Recipt');
+          navigation.navigate('Recipt', { id: item.id });
         }}
       >
-        <Atoms.Wrap
-          stylePadding='0px'
+        <Atoms.View
           marginBottom='24px'
           style={{
             ...Platform.select({
@@ -68,58 +45,44 @@ export default function Home() {
                 shadowRadius: 10,
                 shadowOpacity: 0.12,
               },
-              android: { elevation: 8, backgroundColor: '#0000' },
+              android: { elevation: 15, backgroundColor: '#0000' },
             }),
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             borderBottomLeftRadius: 20,
             borderBottomRightRadius: 20,
-            width: 'auto',
-            height: 'auto',
+            overflow: 'hidden',
             marginRight: 24,
             marginLeft: 24,
           }}
         >
-          <Atoms.View
-            width='100%'
-            height='180px'
-            style={{
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-            }}
-          >
+          <Atoms.View height='180px'>
             <Image
               style={{
                 width: '100%',
                 height: '100%',
-                borderTopLeftRadius: 20,
-                borderTopRightRadius: 20,
               }}
-              source={EX_PHOTO1}
+              source={{ uri: item.image }}
             />
           </Atoms.View>
           <Atoms.View
-            width='100%'
             height='80px'
             background='white'
-            style={{
-              borderBottomLeftRadius: 20,
-              borderBottomRightRadius: 20,
-            }}
             flexDirection='row'
             stylePadding='20px'
             justifyContent='space-between'
+            alignItems='center'
           >
             <Atoms.View justifyContent='space-between'>
               <Atoms.Text fontSize='12px' fontFamily='PreLight'>
-                {item.date}
+                {format(new Date(item.createdAt), 'yyyy년 MM월 dd일')}
               </Atoms.Text>
               <Atoms.Text fontSize='20px' fontFamily='PreBold'>
                 {item.title}
               </Atoms.Text>
             </Atoms.View>
             <Atoms.View marginTop='auto' flexDirection='row'>
-              {[...Array(item.rate)].map((_, i) => (
+              {[...Array(item.difficulty)].map((_, i) => (
                 <Image
                   style={{
                     width: 14,
@@ -132,8 +95,8 @@ export default function Home() {
               ))}
             </Atoms.View>
           </Atoms.View>
-        </Atoms.Wrap>
-      </TouchableOpacity>
+        </Atoms.View>
+      </Pressable>
     );
   }
 
@@ -150,10 +113,10 @@ export default function Home() {
         zIndex={2}
       >
         <Atoms.Text fontFamily='PreBold' marginRight='4px'>
-          11월 16일
+          {format(new Date(), 'MM월 dd일')}
         </Atoms.Text>
         <Atoms.Text fontFamily='PreBold' color='#777'>
-          금요일
+          {format(new Date(), 'E')}요일
         </Atoms.Text>
         <Image
           style={{
@@ -169,7 +132,7 @@ export default function Home() {
       </Atoms.View>
       <Atoms.View flex={1} background='#f6f6f6'>
         <FlatList
-          data={DATA}
+          data={data?.payload?.menus ?? []}
           renderItem={Item}
           ListHeaderComponent={Header}
           keyExtractor={(item, index) => index.toString()}

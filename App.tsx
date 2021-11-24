@@ -7,6 +7,9 @@ import * as Pretendard from '@/assets/fonts';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import Router from './Router';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const queryClient = new QueryClient();
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -36,8 +39,10 @@ export default function App() {
 
   if (!appIsReady) return null;
   return (
-    <SafeAreaProvider>
-      <Router />
-    </SafeAreaProvider>
+    <QueryClientProvider client={queryClient}>
+      <SafeAreaProvider>
+        <Router />
+      </SafeAreaProvider>
+    </QueryClientProvider>
   );
 }
