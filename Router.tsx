@@ -1,10 +1,13 @@
+import * as Atoms from '@/components/Atoms';
+
 import { Edit, Home, Recipt } from '@/screens';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import { CardStyleInterpolators } from '@react-navigation/stack';
 import React from 'react';
-import { Animated } from 'react-native';
+import { Animated, Image } from 'react-native';
+import ICON_CLOSE from '@/assets/icon_close_black.png';
 
 const Stack = createStackNavigator();
 
@@ -37,7 +40,7 @@ const forSlide: any = ({
             progress.interpolate({
               inputRange: [0, 1, 2],
               outputRange: [
-                screen.width, // Focused, but offscreen in the beginning
+                screen.width, // Focused,  ut offscreen in the beginning
                 0, // Fully focused
                 screen.width * -0.3, // Fully unfocused
               ],
@@ -49,18 +52,6 @@ const forSlide: any = ({
       ],
     },
   };
-};
-
-const styleA = {
-  headerStyle: {
-    elevation: 0,
-    shadowOpacity: 0,
-  },
-  headerTitleStyle: {
-    fontFamily: 'PreMedium',
-  },
-  cardStyleInterpolator: forSlide,
-  headerTitleAllowFontScaling: false,
 };
 
 export default function Router() {
@@ -82,6 +73,29 @@ export default function Router() {
             }}
             name='Recipt'
             component={Recipt}
+          />
+          <Stack.Screen
+            options={{
+              cardStyleInterpolator:
+                CardStyleInterpolators.forModalPresentationIOS,
+              headerTitle: '레시피',
+              headerBackImage: () => (
+                <Image
+                  style={{ width: 24, height: 24, marginLeft: 16 }}
+                  source={ICON_CLOSE}
+                />
+              ),
+              headerBackTitleVisible: false,
+              headerRight: () => {
+                return (
+                  <>
+                    <Atoms.Text marginRight='16px'>저장</Atoms.Text>
+                  </>
+                );
+              },
+            }}
+            name='Edit'
+            component={Edit}
           />
         </Stack.Group>
       </Stack.Navigator>

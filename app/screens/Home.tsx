@@ -1,15 +1,19 @@
 import * as Atoms from '@/components/Atoms';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { FlatList, Image, Platform, Pressable } from 'react-native';
+import { Dimensions, FlatList, Image, Platform, Pressable } from 'react-native';
 
 import IMG_BOOKMARK from '@/assets/bookmark.png';
+import IMG_ADD from '@/assets/icon_add.png';
 import IMG_LOGO from '@/assets/logo.png';
 import IMG_STAR from '@/assets/star.png';
+import EX_PHOTO1 from '@/assets/example/photo1.jpeg';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMenusQuery } from '@/hooks/api/menus';
 import { format } from 'date-fns';
+
+const { width } = Dimensions.get('window');
 
 function Header() {
   return (
@@ -34,19 +38,21 @@ export default function Home() {
         onPress={() => {
           navigation.navigate('Recipt', { id: item.id });
         }}
+        style={{
+          ...Platform.select({
+            ios: {
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 5 },
+              shadowRadius: 10,
+              shadowOpacity: 0.12,
+            },
+            android: { elevation: 15, backgroundColor: '#0000' },
+          }),
+        }}
       >
         <Atoms.View
           marginBottom='24px'
           style={{
-            ...Platform.select({
-              ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 5 },
-                shadowRadius: 10,
-                shadowOpacity: 0.12,
-              },
-              android: { elevation: 15, backgroundColor: '#0000' },
-            }),
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             borderBottomLeftRadius: 20,
@@ -62,7 +68,7 @@ export default function Home() {
                 width: '100%',
                 height: '100%',
               }}
-              source={{ uri: item.image }}
+              source={EX_PHOTO1}
             />
           </Atoms.View>
           <Atoms.View
@@ -138,6 +144,26 @@ export default function Home() {
           keyExtractor={(item, index) => index.toString()}
         />
       </Atoms.View>
+      <Pressable
+        style={{
+          position: 'absolute',
+          bottom: 24,
+          left: width / 2 - 60,
+          width: 120,
+          height: 120,
+        }}
+        onPress={() => {
+          navigation.navigate('Edit');
+        }}
+      >
+        <Image
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+          source={IMG_ADD}
+        />
+      </Pressable>
     </SafeAreaView>
   );
 }
