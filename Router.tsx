@@ -1,12 +1,12 @@
 import * as Atoms from '@/components/Atoms';
 
-import { Edit, Home, Recipt } from '@/screens';
+import { Edit, Home, Recipt, SignIn } from '@/screens';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import { CardStyleInterpolators } from '@react-navigation/stack';
 import React from 'react';
-import { Animated, Image } from 'react-native';
+import { Animated, Image, Platform } from 'react-native';
 import ICON_CLOSE from '@/assets/icon_close_black.png';
 
 const Stack = createStackNavigator();
@@ -61,6 +61,11 @@ export default function Router() {
         <Stack.Group>
           <Stack.Screen
             options={{ headerShown: false }}
+            name='SignIn'
+            component={SignIn}
+          />
+          <Stack.Screen
+            options={{ headerShown: false }}
             name='Home'
             component={Home}
           />
@@ -81,7 +86,11 @@ export default function Router() {
               headerTitle: '레시피',
               headerBackImage: () => (
                 <Image
-                  style={{ width: 24, height: 24, marginLeft: 16 }}
+                  style={{
+                    width: 24,
+                    height: 24,
+                    marginLeft: Platform.select({ ios: 16, android: 4 }),
+                  }}
                   source={ICON_CLOSE}
                 />
               ),
